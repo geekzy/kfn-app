@@ -46,41 +46,40 @@ Set up project structure, Go modules, and the etcd-based function registry.
 
 #### 1.1 Project Bootstrap
 
-- [x] Initialize Go module (`go mod init github.com/isat-dev/kfn-app`)
+- [x] Initialize Go module (`go mod init github.com/geekzy/kfn-app`)
 - [x] Set up directory structure as above
 - [x] Create Makefile with build targets
 - [x] Set up CI/CD pipeline stub (GitHub Actions or GitLab CI)
 
 #### 1.2 Configuration System
 
-- [ ] Create config package with Viper integration
-- [ ] Define config schema:
+- [x] Create config package with Viper integration
+- [x] Define config schema:
   - `registry/etcd-endpoints`
   - `container/containerd-socket`
   - `sandbox/type` (gVisor or Kata)
   - `image-registry/harbor-url`
   - `observability/prometheus-url`
-- [ ] Create default config file in `configs/default.yaml`
+- [x] Create default config file in `configs/default.yaml`
 
 #### 1.3 Etcd Registry (pkg/registry)
 
-- [ ] Implement etcd client wrapper
+- [x] Implement etcd client wrapper
   - `FunctionMetadata` struct with fields: `name`, `language`, `runtimeVersion`, `runtimeImage`, `memory`, `timeout`, `handler`
   - CRUD operations: `CreateFunction()`, `GetFunction()`, `ListFunctions()`, `UpdateFunction()`, `DeleteFunction()`
-  - Lease-based registration with TTL for health tracking
-- [ ] Implement function state management: `pending`, `ready`, `error`, `deleting`
-- [ ] Add unit tests with mock etcd
+- [x] Implement function state management: `pending`, `ready`, `error`, `deleting`
+- [x] Add unit tests with mock etcd
 
 #### 1.4 CLI Skeleton (cmd/faasctl)
 
-- [ ] Set up Cobra-based CLI with subcommands:
+- [x] Set up Cobra-based CLI with subcommands:
   - `faasctl deploy`
   - `faasctl list`
   - `faasctl invoke`
   - `faasctl delete`
   - `faasctl status`
-- [ ] Implement `list` command (reads from etcd via registry package)
-- [ ] Implement `status` command (shows function state)
+- [x] Implement `list` command (reads from etcd via registry package)
+- [x] Implement `status` command (shows function state)
 
 ---
 

@@ -1,0 +1,140 @@
+# KFn FaaS Platform - Default Configuration
+
+# Registry configuration (etcd)
+registry:
+  # Etcd endpoints for service discovery and function metadata
+  etcd-endpoints:
+    - localhost:2379
+  # Timeout for registry operations
+  timeout: 5s
+  # Dial timeout for connecting to etcd
+  dial-timeout: 5s
+  # Prefix for all keys in etcd
+  prefix: /kfn
+
+# Container runtime configuration
+container:
+  # Path to containerd socket
+  containerd-socket: /run/containerd/containerd.sock
+  # Containerd namespace
+  namespace: kfn
+  # Snapshotter to use (overlayfs, devmapper, etc.)
+  snapshotter: overlayfs
+
+# Sandbox configuration
+sandbox:
+  # Type of sandbox to use (gVisor or Kata)
+  type: gVisor
+
+# Image registry configuration (Harbor)
+image-registry:
+  # Harbor registry URL
+  harbor-url: http://localhost:8080
+  # Registry username (can be overridden with env var)
+  username: ""
+  # Registry password (can be overridden with env var)
+  password: ""
+  # Allow insecure connections
+  insecure: false
+  # TLS certificate file
+  cert-file: ""
+  # TLS key file
+  key-file: ""
+  # CA root certificate file
+  ca-root-file: ""
+
+# Observability configuration
+observability:
+  # Prometheus metrics endpoint
+  prometheus-url: http://localhost:9090
+  # Log level (debug, info, warn, error)
+  log-level: info
+  # Log format (json, text)
+  log-format: json
+
+# Event system configuration
+events:
+  # Kafka broker addresses
+  kafka-brokers:
+    - localhost:9092
+  # NATS server addresses
+  nats-servers:
+    - nats://localhost:4222
+
+# Authentication and authorization configuration
+auth:
+  # JWT secret for signing tokens
+  jwt-secret: kfn-jwt-secret-change-me
+  # JWT issuer
+  jwt-issuer: kfn-platform
+  # JWT audience
+  jwt-audience: kfn-users
+  # JWT expiration time
+  jwt-expiration: 24h
+  # Enable RBAC
+  rbac-enabled: false
+  # Enable mTLS
+  mtls-enabled: false
+  # mTLS certificate file
+  mtls-cert-file: ""
+  # mTLS key file
+  mtls-key-file: ""
+  # mTLS CA file
+  mtls-ca-file: ""
+
+# Secrets management configuration (Vault)
+secrets:
+  # Vault address
+  vault-address: http://localhost:8200
+  # Vault token
+  vault-token: ""
+  # Vault namespace
+  vault-namespace: ""
+
+# Image build configuration
+build:
+  # Builder to use (buildah or docker)
+  builder: buildah
+  # Build context path
+  context: .
+
+# API server configuration
+api-server:
+  # Server bind address
+  address: 0.0.0.0
+  # Server port
+  port: 8080
+  # Enable TLS
+  tls-enabled: false
+  # TLS certificate file
+  tls-cert-file: ""
+  # TLS key file
+  tls-key-file: ""
+  # Request timeout in seconds
+  request-timeout: 30
+  # Shutdown timeout in seconds
+  shutdown-timeout: 30
+
+# Scheduler configuration
+scheduler:
+  # Maximum concurrent function executions
+  concurrency: 10
+  # Health check port
+  health-check-port: 8081
+  # Number of pre-created containers in warm pool
+  warm-pool-size: 5
+  # Idle timeout for containers before removal
+  idle-timeout: 300s
+
+# Runtime wrappers configuration
+runtime-wrappers:
+  # Node.js executable path
+  nodejs-path: /usr/bin/node
+  # Python executable path
+  python-path: /usr/bin/python3
+  # Entrypoint script name
+  entrypoint: entrypoint.sh
+  # Wrapper script name
+  wrapper-path: wrapper.js
+  # Dependencies file name
+  dependencies: package.json
