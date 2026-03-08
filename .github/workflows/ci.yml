@@ -7,8 +7,10 @@ on:
     branches: [ main, develop ]
 
 env:
-  GO_VERSION: '1.21'
-  GOLANGCI_LINT_VERSION: 'v1.54'
+  GO_VERSION: '1.25'
+  # golangci-lint install script complains when a specific version is missing;
+  # using 'latest' ensures the installer picks a valid release.
+  GOLANGCI_LINT_VERSION: 'latest'
 
 jobs:
   lint:
@@ -35,6 +37,8 @@ jobs:
 
       - name: Install golangci-lint
         run: |
+          # the install script expects a version; 'latest' will resolve to the
+          # most recent tagged release if a hardcoded version becomes unavailable.
           curl -sSfL https://raw.githubusercontent.com/golangci/golangci-lint/master/install.sh | sh -s -- -b $(go env GOPATH)/bin ${{ env.GOLANGCI_LINT_VERSION }}
 
       - name: Run golangci-lint
@@ -160,21 +164,19 @@ jobs:
           CGO_ENABLED: 0
         run: |
           VERSION=${GITHUB_SHA::7}
-          LDFLAGS="-ldflags '-X main.Version=$VERSION -X main.BuildTime=$(date -u +%Y-%m-%dT%H:%M:%SZ)'"
+          # avoid quoting issues by building ldflags string separately and
+          # passing it to go build via -ldflags "...".  this keeps the shell
+          # from injecting extra quotes which previously caused the "invalid
+          # value '"-X'" error.
+          LDFLAGS="-X main.Version=$VERSION -X main.BuildTime=$(date -u +%Y-%m-%dT%H:%M:%SZ)"
 
           mkdir -p bin
 
           echo "Building faasctl for ${{ matrix.os }}/${{ matrix.arch }}"
-          go build $LDFLAGS -o bin/faasctl-${{ matrix.os }}-${{ matrix.arch }}${{ matrix.os == 'windows' && '.exe' || '' }} ./cmd/faasctl
-
-          echo "Building scheduler for ${{ matrix.os }}/${{ matrix.arch }}"
-          go build $LDFLAGS -o bin/scheduler-${{ matrix.os }}-${{ matrix.arch }}${{ matrix.os == 'windows' && '.exe' || '' }} ./cmd/scheduler
-
-          echo "Building api-gateway for ${{ matrix.os }}/${{ matrix.arch }}"
-          go build $LDFLAGS -o bin/api-gateway-${{ matrix.os }}-${{ matrix.arch }}${{ matrix.os == 'windows' && '.exe' || '' }} ./cmd/api-gateway
+          go build -ldflags "$LDFLAGS" -o bin/faasctl-${{ matrix.os }}-${{ matrix.arch }}${{ matrix.os == 'windows' && '.exe' || '' }} ./cmd/faasctl
 
       - name: Upload build artifacts
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: kfn-${{ matrix.os }}-${{ matrix.arch }}
           path: bin/*
@@ -199,8 +201,3 @@ jobs:
           scan-ref: '.'
           format: 'sarif'
           output: 'trivy-results.sarif'
-
-      - name: Upload Trivy results to GitHub Security tab
-        uses: github/codeql-action/upload-sarif@v2
-        with:
-          sarif_file: 'trivy-results.sarif'

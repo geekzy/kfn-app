@@ -47,13 +47,13 @@ type SandboxConfig struct {
 
 // ImageRegistryConfig holds image registry configuration
 type ImageRegistryConfig struct {
-	HarborURL    string `mapstructure:"harbor-url"`
-	Username     string `mapstructure:"username"`
-	Password     string `mapstructure:"password"`
-	Insecure     bool   `mapstructure:"insecure"`
-	CertFile     string `mapstructure:"cert-file"`
-	KeyFile      string `mapstructure:"key-file"`
-	CARootFile   string `mapstructure:"ca-root-file"`
+	HarborURL  string `mapstructure:"harbor-url"`
+	Username   string `mapstructure:"username"`
+	Password   string `mapstructure:"password"`
+	Insecure   bool   `mapstructure:"insecure"`
+	CertFile   string `mapstructure:"cert-file"`
+	KeyFile    string `mapstructure:"key-file"`
+	CARootFile string `mapstructure:"ca-root-file"`
 }
 
 // ObservabilityConfig holds observability configuration

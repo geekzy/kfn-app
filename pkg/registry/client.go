@@ -196,7 +196,8 @@ func (c *Client) AcquireLock(ctx context.Context, name string) (*concurrency.Mut
 
 	// Lock
 	if err := mutex.Lock(ctx); err != nil {
-		session.Close()
+		// close session but ignore error; caller can't act on it here
+		_ = session.Close()
 		return nil, fmt.Errorf("failed to acquire lock: %w", err)
 	}
 

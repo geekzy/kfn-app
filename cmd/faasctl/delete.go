@@ -31,7 +31,9 @@ func runDelete(cmd *cobra.Command, args []string) error {
 	if err != nil {
 		return fmt.Errorf("failed to create registry client: %w", err)
 	}
-	defer client.Close()
+	// explicitly ignore error on close; deferred cleanup should not mask
+	// the primary error path.  lint requires us to handle the return value.
+	defer func() { _ = client.Close() }()
 
 	// Delete function
 	ctx := context.Background()

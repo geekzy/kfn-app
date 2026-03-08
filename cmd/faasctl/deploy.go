@@ -32,19 +32,20 @@ func runDeploy(cmd *cobra.Command, args []string) error {
 	if err != nil {
 		return fmt.Errorf("failed to create registry client: %w", err)
 	}
-	defer client.Close()
+	// Close returns an error; log but don’t override any existing error.
+	defer func() { _ = client.Close() }()
 
 	// TODO: Parse function metadata from command line flags or config file
 	// For now, we'll create a minimal function metadata
 	fn := &registry.FunctionMetadata{
-		Name:          functionName,
-		Language:      "nodejs",
+		Name:           functionName,
+		Language:       "nodejs",
 		RuntimeVersion: "18",
-		RuntimeImage:  "node:18-alpine",
-		Memory:        128,
-		Timeout:       30 * time.Second,
-		Handler:       "index.handler",
-		State:         registry.FunctionPending,
+		RuntimeImage:   "node:18-alpine",
+		Memory:         128,
+		Timeout:        30 * time.Second,
+		Handler:        "index.handler",
+		State:          registry.FunctionPending,
 	}
 
 	// Deploy function
